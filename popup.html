@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <base target="_blank" />
+  <style>
+    body {
+      width: 550px;
+      min-height: 400px;
+      padding: 10px;
+      font-family: Arial, sans-serif;
+      overflow-x: hidden;
+    }
+    button {
+      padding: 10px;
+      margin: 5px 0;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:active {
+      opacity: 50%;
+    }
+    .mainButtons {
+      text-align: center;
+    }
+    .mainButtons button {
+      width: 180px;
+    }
+    #toggleMarkdown {
+      background: #55aaff;
+      color: white;
+    }
+    #toggleMarkdown:hover {
+      background: #5599dd;
+    }
+    #copyMarkdown,
+    #copyMarkdownSuccess {
+      background: #666666;
+      color: white;
+    }
+    #copyMarkdown:hover {
+      background: #555555;
+    }
+    #clearData {
+      background: #ee3333;
+      color: white;
+    }
+    #clearData:hover {
+      background: #bb2222;
+    }
+    table {
+      border-collapse: collapse;
+    }
+    table, th, td {
+      border: 1px solid;
+    }
+    textarea {
+      width: 100%;
+      min-height: 400px;
+    }
+    button {
+      display: inline-flex;
+      justify-content: center;
+    }
+    button img {
+      height: 1.2em;
+    }
+    #toggleMarkdown img,
+    #copyMarkdown img,
+    #clearData img {
+      margin-inline-end: 5px;
+      filter: brightness(0%) invert(100%);
+    }
+    #initialOverlay {
+      position: fixed;
+      margin: 0;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      align-content: center;
+      background-color: white;
+      z-index: 10;
+      padding: 16px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      body,
+      #initialOverlay,
+      textarea {
+        color: white;
+        background-color: black;
+      }
+      a {
+        color: #77aaff;
+      }
+      a:visited {
+        color: #ccaaff;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h3>Info Table for Humble Choice</h3>
+
+  <div id="initialOverlay">
+    <h3>Get started by visiting Humble Choice</h3>
+    <h4><a href="https://www.humblebundle.com/membership">https://www.humblebundle.com/membership</a></h4>
+    <div>Then check this extension again!</div>
+  </div>
+
+  <div class="mainButtons">
+    <button id="toggleMarkdown"><img src="./icons/visibility-24.png"> Toggle Markdown</button>
+    <button id="copyMarkdown"><img src="./icons/copy-24.png"> Copy Markdown</button>
+    <button id="copyMarkdownSuccess" style="display: none;"><img src="./icons/success-circle-24.png"></button>
+    <button id="clearData"><img src="./icons/delete-24.png"> Clear Data</button>
+  </div>
+  
+  <table id="currentTable"></table>
+  <textarea id="currentMarkdown" readonly="readonly" style="display: none;"></textarea>
+
+  <div>
+    <p>To <b>update</b> the current games list (previous data will be retained), visit:</p>
+    <p><a href="https://www.humblebundle.com/membership">https://www.humblebundle.com/membership</a></p>
+  </div>
+
+  <script src="common.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

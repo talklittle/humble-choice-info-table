@@ -1,0 +1,82 @@
+{
+  "manifest_version": 3,
+  "name": "Info Table for Humble Choice",
+  "version": "1.0.0",
+
+  "description": "Helps gather info about Humble Choice games and formats them in a Markdown table.",
+
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "@humble-choice-info-table.talklittle",
+      "strict_min_version": "117.0"
+    }
+  },
+
+  "icons": {
+    "32": "icons/table-32.png",
+    "64": "icons/table-64.png"
+  },
+
+  "permissions": [
+    "storage"
+  ],
+  "host_permissions": [
+    "https://store.steampowered.com/app/*",
+    "https://opencritic.com/",
+    "https://opencritic.com/game/*",
+    "https://www.protondb.com/app/*",
+    "https://www.protondb.com/search",
+    "https://www.humblebundle.com/membership",
+    "https://www.humblebundle.com/membership/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Info Table for Humble Choice",
+    "default_icon": {
+      "16": "icons/table-16.png",
+      "32": "icons/table-32.png"
+    },
+    "theme_icons": [
+      {
+        "light": "icons/table-dark-16.png",
+        "dark": "icons/table-16.png",
+        "size": 16
+      },
+      {
+        "light": "icons/table-dark-32.png",
+        "dark": "icons/table-32.png",
+        "size": 32
+      }
+    ]
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.humblebundle.com/membership",
+        "https://www.humblebundle.com/membership/*"
+      ],
+      "js": ["common.js", "content.js", "content-humble.js"],
+      "run_at": "document_end"
+    },
+    {
+      "matches": [
+        "https://store.steampowered.com/app/*",
+        "https://opencritic.com/game/*",
+        "https://www.protondb.com/app/*"
+      ],
+      "js": ["common.js", "content.js", "content-default.js"]
+    },
+    {
+      "matches": [
+        "https://opencritic.com/"
+      ],
+      "js": ["common.js", "content.js", "content-opencritic-search.js"]
+    },
+    {
+      "matches": [
+        "https://www.protondb.com/search*"
+      ],
+      "js": ["common.js", "content.js", "content-protondb-search.js"]
+    }
+  ]
+}
