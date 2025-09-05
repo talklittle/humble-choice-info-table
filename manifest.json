@@ -4,6 +4,7 @@
   "version": "1.0.0",
 
   "description": "Helps gather info about Humble Choice games and formats them in a Markdown table.",
+  "homepage_url": "https://github.com/talklittle/humble-choice-info-table",
 
   "browser_specific_settings": {
     "gecko": {
