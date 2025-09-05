@@ -1,0 +1,35 @@
+name: Build and Sign Extension
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+
+      - name: Install web-ext
+        run: |
+          npm install -g web-ext
+
+      - name: Build and sign extension
+        run: |
+          web-ext --config=web-ext-config.mjs \
+            sign \
+            --artifacts-dir ./web-ext-artifacts \
+            --channel unlisted \
+            --api-key ${{ secrets.WEB_EXT_API_KEY }} \
+            --api-secret ${{ secrets.WEB_EXT_API_SECRET }}
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        if: github.ref_type == 'tag'
+        with:
+          files: web-ext-artifacts/*.xpi
