@@ -14,6 +14,8 @@ A browser extension designed to gather and organize information on monthly Humbl
 
 [![Firefox Add-ons](get-the-addon-178x60px.dad84b42.png)](https://addons.mozilla.org/firefox/addon/info-table-for-humble-choice/)
 
+Alternatively, get the signed .xpi file from [Releases](https://github.com/talklittle/humble-choice-info-table/releases).
+
 ## Usage
 
 1. **Open the extension** from the browser toolbar icon.
