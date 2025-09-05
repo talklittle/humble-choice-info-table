@@ -12,8 +12,7 @@ A browser extension designed to gather and organize information on monthly Humbl
 
 ## Installation
 
-* [Firefox Add-ons](https://addons.mozilla.org/)
-* [Chrome Web Store](https://chromewebstore.google.com/)
+[![Firefox Add-ons](get-the-addon-178x60px.dad84b42.png)](https://addons.mozilla.org/firefox/addon/info-table-for-humble-choice/)
 
 ## Usage
 
