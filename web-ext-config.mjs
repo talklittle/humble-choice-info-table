@@ -1,6 +1,5 @@
 export default {
   ignoreFiles: [
-    'build-web-ext.sh',
     'web-ext-config.mjs',
     'README.md',
     'screenshot1.jpeg',
