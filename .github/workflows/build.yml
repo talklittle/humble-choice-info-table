@@ -18,6 +18,10 @@ jobs:
         run: |
           npm install -g web-ext
 
+      - name: Append "-git" to version number for unlisted channel
+        run: |
+          sed -i 's/"version": "\(.*\)"/"version": "\1-git"/' manifest.json
+
       - name: Run lint test
         run: |
           web-ext --config=web-ext-config.mjs lint
@@ -28,7 +32,7 @@ jobs:
           web-ext --config=web-ext-config.mjs \
             sign \
             --artifacts-dir ./web-ext-artifacts \
-            --channel listed \
+            --channel unlisted \
             --api-key ${{ secrets.WEB_EXT_API_KEY }} \
             --api-secret ${{ secrets.WEB_EXT_API_SECRET }}
 
