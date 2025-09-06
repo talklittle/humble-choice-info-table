@@ -1,9 +1,6 @@
 name: Build and Sign Extension
 
-on:
-  push:
-    tags:
-      - "v*.*.*"
+on: push
 
 jobs:
   build:
@@ -19,7 +16,12 @@ jobs:
         run: |
           npm install -g web-ext
 
+      - name: Run lint test
+        run: |
+          web-ext --config=web-ext-config.mjs lint
+
       - name: Build and sign extension
+        if: github.ref_type == 'tag'
         run: |
           web-ext --config=web-ext-config.mjs \
             sign \
