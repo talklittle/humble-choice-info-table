@@ -18,9 +18,9 @@ jobs:
         run: |
           npm install -g web-ext
 
-      - name: Append "-git" to version number for unlisted channel
+      - name: Append ".1" to version number for unlisted channel
         run: |
-          sed -i 's/"version": "\(.*\)"/"version": "\1-git"/' manifest.json
+          sed -i 's/"version": "\(.*\)"/"version": "\1.1"/' manifest.json
 
       - name: Run lint test
         run: |
