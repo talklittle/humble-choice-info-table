@@ -28,7 +28,7 @@ jobs:
           web-ext --config=web-ext-config.mjs \
             sign \
             --artifacts-dir ./web-ext-artifacts \
-            --channel unlisted \
+            --channel listed \
             --api-key ${{ secrets.WEB_EXT_API_KEY }} \
             --api-secret ${{ secrets.WEB_EXT_API_SECRET }}
 
