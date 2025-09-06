@@ -37,6 +37,10 @@ Alternatively, get the signed .xpi file from [Releases](https://github.com/talkl
 
 ![Screenshot of generated markdown table](screenshot2.jpeg)
 
+## Release Notes
+
+See [CHANGELOG.md](CHANGELOG.md).
+
 ## Known Issues
 
 1. **DLC bundles not handled**: The extension does not automatically parse or handle DLC bundles. Manual data entry is required for these cases.
