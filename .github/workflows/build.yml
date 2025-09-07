@@ -63,10 +63,9 @@ jobs:
 
       # Sign and submit the extension to Firefox Add-ons.
       # Assume it takes days to approve, so set
-      # approval timeout to 0 and ignore error.
+      # approval timeout to 0 to skip waiting.
       - name: Build and sign extension
         if: github.ref_type == 'tag'
-        continue-on-error: true
         run: |
           web-ext --config=web-ext-config.mjs \
             sign \
