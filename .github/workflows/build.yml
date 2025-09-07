@@ -3,7 +3,7 @@ name: Build and Sign Extension
 on: push
 
 jobs:
-  build:
+  build-unlisted-xpi:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -26,6 +26,8 @@ jobs:
         run: |
           web-ext --config=web-ext-config.mjs lint
 
+      # Unlisted channel, which we expect to return
+      # within a few minutes, along with signed .xpi.
       - name: Build and sign extension
         if: github.ref_type == 'tag'
         run: |
@@ -41,3 +43,35 @@ jobs:
         if: github.ref_type == 'tag'
         with:
           files: web-ext-artifacts/*.xpi
+
+  build-listed:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+
+      - name: Install web-ext
+        run: |
+          npm install -g web-ext
+
+      - name: Run lint test
+        run: |
+          web-ext --config=web-ext-config.mjs lint
+
+      # Sign and submit the extension to Firefox Add-ons.
+      # Assume it takes days to approve, so set
+      # approval timeout to 0 and ignore error.
+      - name: Build and sign extension
+        if: github.ref_type == 'tag'
+        continue-on-error: true
+        run: |
+          web-ext --config=web-ext-config.mjs \
+            sign \
+            --artifacts-dir ./web-ext-artifacts \
+            --channel listed \
+            --approval-timeout 0 \
+            --api-key ${{ secrets.WEB_EXT_API_KEY }} \
+            --api-secret ${{ secrets.WEB_EXT_API_SECRET }}
