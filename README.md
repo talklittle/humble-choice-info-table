@@ -25,7 +25,8 @@ Alternatively, get the signed .xpi file from [Releases](https://github.com/talkl
 5. **View and copy the markdown table** using the extension's popup window by clicking the extension's icon.
 6. **Disable the extension** when you're done. It's not really useful to keep running after the table is complete.
 
-> ⚠️ Note: You must manually visit each game's page for the extension to gather data. It does not automatically fetch information from external sources.
+> [!NOTE]
+> You must manually visit each game's page for the extension to gather data. It does not automatically fetch information from external sources.
 
 ## Screenshots
 
