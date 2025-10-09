@@ -125,33 +125,40 @@ function extractProtonDBInfo() {
 
 function extractHumbleChoice() {
   // Try from webpack <script> in monthly URL, e.g. /membership/september-2025
-  const dataString = document.getElementById('webpack-monthly-product-data')?.textContent;
-  
-  let gameData;
-  let displayOrder;
+  var dataString = document.getElementById('webpack-monthly-product-data')?.textContent;
+  if (!dataString) {
+    // Try from webpack <script> in logged-in URL, /membership/home
+    dataString = document.getElementById('webpack-subscriber-hub-data')?.textContent;
+  }
   if (dataString) {
     const data = JSON.parse(dataString);
     log('Humble Choice webpack info:', data);
 
     const contentChoiceData = data['contentChoiceOptions']['contentChoiceData'];
-    gameData = contentChoiceData['game_data'];
-    displayOrder = contentChoiceData['display_order'];
-  } else {
-    // Get from DOM elements from top-level /membership URL
-    const dataEl = document.querySelector('button[data-content-choice-data]');
-    const orderEl = document.querySelector('button[data-display-order]');
-    if (dataEl && orderEl) {
-      gameData = JSON.parse(dataEl.getAttribute('data-content-choice-data'));
-      displayOrder = JSON.parse(orderEl.getAttribute('data-display-order'));
-      log('Found Humble Choice DOM elements');
-    } else {
-      // No Humble Choice data found on this page
-      return;
-    }
+    let gameData = contentChoiceData['game_data'];
+    let displayOrder = contentChoiceData['display_order'];
+
+    const gameInfo = createGamesAndOrderObjectFromHumble(gameData, displayOrder);
+    updateStoredInfo(gameInfo);
+
+    return;
   }
 
-  const gameInfo = createGamesAndOrderObjectFromHumble(gameData, displayOrder);
-  updateStoredInfo(gameInfo);
+  // Get from DOM elements from top-level /membership URL
+  const dataEl = document.querySelector('button[data-content-choice-data]');
+  const orderEl = document.querySelector('button[data-display-order]');
+  if (dataEl && orderEl) {
+    let gameData = JSON.parse(dataEl.getAttribute('data-content-choice-data'));
+    let displayOrder = JSON.parse(orderEl.getAttribute('data-display-order'));
+    log('Found Humble Choice DOM elements');
+    
+    const gameInfo = createGamesAndOrderObjectFromHumble(gameData, displayOrder);
+    updateStoredInfo(gameInfo);
+
+    return;
+  }
+
+  log('No Humble Choice data found on this page');
 }
 
 function createGamesAndOrderObjectFromHumble(gameData, displayOrderByShortKey) {
