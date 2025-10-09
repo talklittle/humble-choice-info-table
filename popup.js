@@ -68,11 +68,31 @@ document.addEventListener('DOMContentLoaded', function() {
 
   async function rebuildTable() {
     const data = await browser.storage.local.get({'knownInfo': {}});
-    currentTable.replaceChildren(...buildCurrentTableRowElements(data.knownInfo));
-    currentMarkdown.value = buildCurrentMarkdown(data.knownInfo);
+
+    const caseInsensitiveHandler = {
+      get(obj, prop) {
+        if (prop in obj && (typeof obj[prop] !== 'object' || Array.isArray(obj[prop]))) {
+          return obj[prop];
+        }
+
+        // merge values of all case-insensitive matching properties (game titles),
+        // each of whose values is an object (per-game info)
+        var result = {};
+        for (let k in obj) {
+          if (prop.localeCompare(k, undefined, { sensitivity: 'base' }) === 0 && typeof obj[k] === 'object') {
+            result = {...result, ...obj[k]};
+          }
+        }
+        return result;
+      },
+    };
+    const caseInsensitiveKnownInfo = new Proxy(data.knownInfo, caseInsensitiveHandler);
+
+    currentTable.replaceChildren(...buildCurrentTableRowElements(caseInsensitiveKnownInfo));
+    currentMarkdown.value = buildCurrentMarkdown(caseInsensitiveKnownInfo);
 
     // If there's no data yet, show overlay directing user to Humble Choice page
-    if (data.knownInfo['__gameDisplayOrder__']) {
+    if (caseInsensitiveKnownInfo['__gameDisplayOrder__']) {
       initialOverlay.style.display = 'none';
     } else {
       initialOverlay.style.display = '';
