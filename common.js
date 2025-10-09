@@ -24,3 +24,13 @@ function removeURLQueryAndFragment(url) {
   }
   return url;
 }
+
+function removeParenthesizedYearFromEnd(str) {
+    const yearPattern = / \(\d{4}\)$/;
+
+    if (yearPattern.test(str)) {
+        return str.replace(yearPattern, '');
+    }
+
+    return str;
+}

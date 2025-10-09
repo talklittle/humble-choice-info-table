@@ -86,6 +86,17 @@ function extractOpenCriticInfo() {
       opencriticPage: opencriticPage
     }
   });
+
+  // Handle cases where OpenCritic appends a parenthesized year to the title
+  let gameNameWithYearRemoved = removeParenthesizedYearFromEnd(gameName);
+  if (gameNameWithYearRemoved !== gameName) {
+    updateStoredInfo({
+      [gameNameWithYearRemoved]: {
+        opencriticScore: score,
+        opencriticPage: opencriticPage
+      }
+    });
+  }
 }
 
 function extractProtonDBInfo() {
