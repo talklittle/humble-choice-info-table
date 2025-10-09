@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Info Table for Humble Choice",
-  "version": "1.0.3",
+  "version": "1.0.4",
 
   "description": "Helps gather info about Humble Choice games and formats them in a Markdown table.",
   "homepage_url": "https://github.com/talklittle/humble-choice-info-table",
