@@ -189,6 +189,12 @@ function createGamesAndOrderObjectFromHumble(gameData, displayOrderByShortKey) {
       shortKeyToTitleMap[key] = title;
 
       result[title] = {};
+
+      const steamAppId = getSteamAppIdFromHumbleGameInfo(gameInfo);
+      if (steamAppId) {
+        result[title]['steamAppId'] = steamAppId;
+        log('Found steamAppId ' + steamAppId);
+      }
     }
   }
 
@@ -196,6 +202,18 @@ function createGamesAndOrderObjectFromHumble(gameData, displayOrderByShortKey) {
   log('Game display order:', result['__gameDisplayOrder__']);
   
   return result;
+}
+
+function getSteamAppIdFromHumbleGameInfo(gameInfo) {
+  if (!gameInfo['tpkds']) {
+    return undefined;
+  }
+  for (const entry of gameInfo['tpkds']) {
+    if (entry['steam_app_id']) {
+      return entry['steam_app_id'];
+    }
+  }
+  return undefined;
 }
 
 async function updateStoredInfo(gameInfo) {

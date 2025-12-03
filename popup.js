@@ -131,18 +131,29 @@ function buildCurrentTableRowElements(updatedInfo) {
       const row = document.createElement('tr');
       let oneGameInfo = updatedInfo[key];
       let title = key;
+      let steamAppId = oneGameInfo['steamAppId'];
       
       // Steam Page column
       const steamCell = document.createElement('td');
       if (oneGameInfo['steamPage']) {
+        // Presence of 'steamPage' key implies Steam page has been parsed
         const link = document.createElement('a');
         link.href = oneGameInfo['steamPage'];
         link.textContent = title;
         steamCell.appendChild(link);
-      } else {
-        const searchTerm = encodeURIComponent(title);
+      } else if (steamAppId) {
         steamCell.textContent = title;
         steamCell.appendChild(document.createElement('br'));
+        const link = document.createElement('a');
+        link.href = `https://store.steampowered.com/app/${steamAppId}/`;
+        const bold = document.createElement('b');
+        bold.textContent = '⚠️Go⚠️';
+        link.appendChild(bold);
+        steamCell.appendChild(link);
+      } else {
+        steamCell.textContent = title;
+        steamCell.appendChild(document.createElement('br'));
+        const searchTerm = encodeURIComponent(title);
         const link = document.createElement('a');
         link.href = `https://store.steampowered.com/search/?term=${searchTerm}`;
         const bold = document.createElement('b');
@@ -198,6 +209,13 @@ function buildCurrentTableRowElements(updatedInfo) {
         const link = document.createElement('a');
         link.href = oneGameInfo['protonDBPage'];
         link.textContent = oneGameInfo['protonDBRating'];
+        protondbCell.appendChild(link);
+      } else if (steamAppId) {
+        const link = document.createElement('a');
+        link.href = `https://www.protondb.com/app/${steamAppId}`;
+        const bold = document.createElement('b');
+        bold.textContent = '⚠️Go⚠️';
+        link.appendChild(bold);
         protondbCell.appendChild(link);
       } else {
         const searchTerm = encodeURIComponent(title);
