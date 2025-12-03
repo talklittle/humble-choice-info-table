@@ -56,7 +56,7 @@
         "https://www.humblebundle.com/membership",
         "https://www.humblebundle.com/membership/*"
       ],
-      "js": ["common.js", "content.js", "content-humble.js"],
+      "js": ["common.js", "content.js", "content-default.js"],
       "run_at": "document_end"
     },
     {
