@@ -75,6 +75,11 @@ document.addEventListener('DOMContentLoaded', function() {
           return obj[prop];
         }
 
+        if (prop === '__gameDisplayOrder__') {
+          // special case array should be undefined if not present, not {}
+          return undefined;
+        }
+
         // merge values of all case-insensitive matching properties (game titles),
         // each of whose values is an object (per-game info)
         var result = {};
