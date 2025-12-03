@@ -7,7 +7,7 @@ async function extractGameInfo() {
   } else if (currentDomain.includes('opencritic.com') && currentPath.startsWith('/game/')) {
     extractOpenCriticInfo();
   } else if (currentDomain.includes('protondb.com')) {
-    extractProtonDBInfo();
+    await extractProtonDBInfo();
   } else if (currentDomain.includes('humblebundle.com')) {
     extractHumbleChoice();
   }
@@ -100,13 +100,14 @@ function extractOpenCriticInfo() {
   }
 }
 
-function extractProtonDBInfo() {
-  const gameName = document.querySelector('[class^=GameInfo__Title]')?.textContent;
+async function extractProtonDBInfo() {
+  const gameNameEl = await observeQuerySelector('[class^=GameInfo__Title]');
+  const gameName = gameNameEl?.textContent;
   if (!gameName) {
     return;
   }
 
-  const ratingElement = document.querySelector('[class^=MedalSummary]');
+  const ratingElement = await observeQuerySelector('[class^=MedalSummary]');
   const rating = ratingElement ? ratingElement.textContent : "--";
   const protonDBPage = removeURLQueryAndFragment(window.location.href);
 
