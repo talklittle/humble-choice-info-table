@@ -1,9 +1,9 @@
-function extractGameInfo() {
+async function extractGameInfo() {
   const currentDomain = window.location.hostname;
   const currentPath = window.location.pathname;
   
   if (currentDomain.includes('store.steampowered.com')) {
-    extractSteamInfo();
+    await extractSteamInfo();
   } else if (currentDomain.includes('opencritic.com') && currentPath.startsWith('/game/')) {
     extractOpenCriticInfo();
   } else if (currentDomain.includes('protondb.com')) {
@@ -13,7 +13,7 @@ function extractGameInfo() {
   }
 }
 
-function extractSteamInfo() {
+async function extractSteamInfo() {
   const gameName = document.getElementById('appHubAppName')?.textContent;
   if (!gameName) {
     return;
@@ -35,8 +35,9 @@ function extractSteamInfo() {
     // assume no Recent Reviews
     scores.splice(0, 0, '--');
   }
-  
-  const steamDeckResults = document.querySelector('div[data-featuretarget=deck-verified-results]')?.textContent || '';
+
+  const steamDeckResultsEl = await observeQuerySelector('div[data-featuretarget=deck-verified-results] span');
+  const steamDeckResults = steamDeckResultsEl?.textContent || '';
   let steamDeck;
   if (steamDeckResults.includes('Verified')) {
     steamDeck = '✅ Verified';

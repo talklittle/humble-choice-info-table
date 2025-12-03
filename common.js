@@ -34,3 +34,31 @@ function removeParenthesizedYearFromEnd(str) {
 
     return str;
 }
+
+function observeQuerySelector(query, timeoutMillis) {
+  if (!timeoutMillis) {
+    timeoutMillis = 10000;
+  }
+
+  return new Promise((resolve, reject) => {
+    let el = document.querySelector(query);
+    if (el) {
+      resolve(el);
+      return;
+    }
+
+    const domObserver = new MutationObserver((_mutationList, observer) => {
+      const el = document.querySelector(query);
+
+      if (el) {
+        observer.disconnect();
+        resolve(el);
+      }
+    });
+    domObserver.observe(document.body, { childList: true, subtree: true });
+
+    setTimeout(() => {
+      reject(new Error('timeout'));
+    }, timeoutMillis);
+  });
+}
