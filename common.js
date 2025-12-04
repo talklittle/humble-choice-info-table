@@ -7,10 +7,10 @@ if (isChrome) {
   browser = chrome;
 }
 
-function log(message, ...moreArgs) {
-  if (LOGGING) {
-    console.log(message, ...moreArgs);
-  }
+if (LOGGING) {
+  var log = console.log.bind(window.console);
+} else {
+  var log = function(){};
 }
 
 function removeURLQueryAndFragment(url) {
