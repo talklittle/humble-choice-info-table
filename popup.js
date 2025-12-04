@@ -68,36 +68,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
   async function rebuildTable() {
     const data = await browser.storage.local.get({'knownInfo': {}});
+    let knownInfo = data.knownInfo;
 
-    const caseInsensitiveHandler = {
-      get(obj, prop) {
-        if (prop in obj && (typeof obj[prop] !== 'object' || Array.isArray(obj[prop]))) {
-          return obj[prop];
-        }
+    // merge data from alternate game titles (different capitalization/punctuation)
+    mergeAlternateTitleGameInfo(knownInfo);
 
-        if (prop === '__gameDisplayOrder__') {
-          // special case array should be undefined if not present, not {}
-          return undefined;
-        }
-
-        // merge values of all case-insensitive matching properties (game titles),
-        // each of whose values is an object (per-game info)
-        var result = {};
-        for (let k in obj) {
-          if (prop.localeCompare(k, undefined, { sensitivity: 'base' }) === 0 && typeof obj[k] === 'object') {
-            result = {...result, ...obj[k]};
-          }
-        }
-        return result;
-      },
-    };
-    const caseInsensitiveKnownInfo = new Proxy(data.knownInfo, caseInsensitiveHandler);
-
-    currentTable.replaceChildren(...buildCurrentTableRowElements(caseInsensitiveKnownInfo));
-    currentMarkdown.value = buildCurrentMarkdown(caseInsensitiveKnownInfo);
+    currentTable.replaceChildren(...buildCurrentTableRowElements(knownInfo));
+    currentMarkdown.value = buildCurrentMarkdown(knownInfo);
 
     // If there's no data yet, show overlay directing user to Humble Choice page
-    if (caseInsensitiveKnownInfo['__gameDisplayOrder__']) {
+    if (knownInfo['__gameDisplayOrder__']) {
       initialOverlay.style.display = 'none';
     } else {
       initialOverlay.style.display = '';
@@ -106,6 +86,19 @@ document.addEventListener('DOMContentLoaded', function() {
   rebuildTable();
   browser.storage.onChanged.addListener(rebuildTable);
 });
+
+function mergeAlternateTitleGameInfo(updatedInfo) {
+  if (!updatedInfo['__gameDisplayOrder__']) {
+    return;
+  }
+  for (const humbleTitle of updatedInfo['__gameDisplayOrder__']) {
+    if (updatedInfo[humbleTitle] && updatedInfo[humbleTitle]['altTitles']) {
+      for (const altTitle of updatedInfo[humbleTitle]['altTitles']) {
+        updatedInfo[humbleTitle] = {...updatedInfo[humbleTitle], ...updatedInfo[altTitle]};
+      }
+    }
+  }
+}
 
 function buildCurrentTableRowElements(updatedInfo) {
   const rows = [];

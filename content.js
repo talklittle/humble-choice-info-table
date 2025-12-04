@@ -20,6 +20,7 @@ async function extractSteamInfo() {
   }
 
   const steamPage = removeURLQueryAndFragment(window.location.href);
+  const steamAppId = getSteamAppIdFromURL(steamPage);
 
   const scoreRegex = /(\d+)%/;
   const userReviewsAnchors = document.querySelectorAll('#userReviews a[data-tooltip-html]');
@@ -60,15 +61,42 @@ async function extractSteamInfo() {
   if (platformsEl?.querySelector('.linux')) {
     platforms.push('Linux');
   }
-  
-  updateStoredInfo({
+
+  let updatedInfo = {
     [gameName]: {
       steamPage: steamPage,
+      steamAppId: steamAppId,
       steamRecentAll: scores.join(' / '),
       steamDeck: steamDeck,
       operatingSystems: platforms.join(', ')
     }
-  });
+  };
+
+  // Associate with Humble game that uses different title formatting,
+  // e.g. Roman numeral "II" instead of "2".
+  //
+  // Note: This association only works if the Humble Choice page was visited first,
+  // and the current monthly games are known to this extension.
+  // This is to avoid linear scan of *all* historical titles stored in extension storage.
+  const stored = await browser.storage.local.get({'knownInfo': {}});
+  if (stored.knownInfo['__gameDisplayOrder__'] && steamAppId) {
+    for (const eachGameTitle of stored.knownInfo['__gameDisplayOrder__']) {
+      if (eachGameTitle === gameName) {
+        continue;
+      }
+      if (stored.knownInfo[eachGameTitle] && stored.knownInfo[eachGameTitle]['steamAppId'] === steamAppId) {
+        let altTitles = stored.knownInfo[eachGameTitle]['altTitles'] || [];
+        if (!altTitles.includes(gameName)) {
+          altTitles.push(gameName);
+        }
+        updatedInfo[eachGameTitle] = {
+          altTitles: altTitles
+        };
+      }
+    }
+  }
+
+  await updateStoredInfo(updatedInfo);
 }
 
 function extractOpenCriticInfo() {
@@ -128,7 +156,7 @@ async function extractProtonDBInfo() {
     formattedRating = '🕙 Awaiting Reports';
   }
   
-  updateStoredInfo({
+  await updateStoredInfo({
     [gameName]: {
       protonDBRating: formattedRating,
       protonDBPage: protonDBPage
@@ -212,6 +240,22 @@ function getSteamAppIdFromHumbleGameInfo(gameInfo) {
     if (entry['steam_app_id']) {
       return entry['steam_app_id'];
     }
+  }
+  return undefined;
+}
+
+function getSteamAppIdFromURL(urlString) {
+  let url = new URL(urlString);
+  if (url.host !== 'store.steampowered.com') {
+    return undefined;
+  }
+  if (url.pathname.startsWith('/app/')) {
+    let split = url.pathname.split('/');
+    let id = parseInt(split[2]);
+    if (isNaN(id)) {
+      return undefined;
+    }
+    return id;
   }
   return undefined;
 }
