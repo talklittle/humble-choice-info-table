@@ -62,7 +62,7 @@ async function extractSteamInfo() {
     platforms.push('Linux');
   }
 
-  let updatedInfo = {
+  await updateStoredInfo({
     [gameName]: {
       steamPage: steamPage,
       steamAppId: steamAppId,
@@ -70,33 +70,9 @@ async function extractSteamInfo() {
       steamDeck: steamDeck,
       operatingSystems: platforms.join(', ')
     }
-  };
+  });
 
-  // Associate with Humble game that uses different title formatting,
-  // e.g. Roman numeral "II" instead of "2".
-  //
-  // Note: This association only works if the Humble Choice page was visited first,
-  // and the current monthly games are known to this extension.
-  // This is to avoid linear scan of *all* historical titles stored in extension storage.
-  const stored = await browser.storage.local.get({'knownInfo': {}});
-  if (stored.knownInfo['__gameDisplayOrder__'] && steamAppId) {
-    for (const eachGameTitle of stored.knownInfo['__gameDisplayOrder__']) {
-      if (eachGameTitle === gameName) {
-        continue;
-      }
-      if (stored.knownInfo[eachGameTitle] && stored.knownInfo[eachGameTitle]['steamAppId'] === steamAppId) {
-        let altTitles = stored.knownInfo[eachGameTitle]['altTitles'] || [];
-        if (!altTitles.includes(gameName)) {
-          altTitles.push(gameName);
-        }
-        updatedInfo[eachGameTitle] = {
-          altTitles: altTitles
-        };
-      }
-    }
-  }
-
-  await updateStoredInfo(updatedInfo);
+  await insertStoredAlternateTitle(steamAppId, gameName);
 }
 
 function extractOpenCriticInfo() {
@@ -162,6 +138,11 @@ async function extractProtonDBInfo() {
       protonDBPage: protonDBPage
     }
   });
+
+  const steamAppId = getSteamAppIdFromURL(protonDBPage);
+  if (steamAppId) {
+    await insertStoredAlternateTitle(steamAppId, gameName);
+  }
 }
 
 function extractHumbleChoice() {
@@ -246,16 +227,14 @@ function getSteamAppIdFromHumbleGameInfo(gameInfo) {
 
 function getSteamAppIdFromURL(urlString) {
   let url = new URL(urlString);
-  if (url.host !== 'store.steampowered.com') {
-    return undefined;
-  }
-  if (url.pathname.startsWith('/app/')) {
-    let split = url.pathname.split('/');
-    let id = parseInt(split[2]);
-    if (isNaN(id)) {
-      return undefined;
+  if (url.host === 'store.steampowered.com' || url.host === 'www.protondb.com') {
+    if (url.pathname.startsWith('/app/')) {
+      let split = url.pathname.split('/');
+      let id = parseInt(split[2]);
+      if (!isNaN(id)) {
+        return id;
+      }
     }
-    return id;
   }
   return undefined;
 }
@@ -280,6 +259,41 @@ function updateKnownInfo(knownInfo, gameInfo) {
       // Merge in the new info, per game
       knownInfo[key] = {...knownInfo[key], ...gameInfo[key]};
       log(`Updating game ${key} with:`, knownInfo[key]);
+    }
+  }
+}
+
+async function insertStoredAlternateTitle(steamAppId, gameName) {
+  // Associate with Humble game that uses different title formatting,
+  // e.g. Roman numeral "II" instead of "2".
+  //
+  // Note: This association only works if the Humble Choice page was visited first,
+  // and the current monthly games are known to this extension.
+  // This is to avoid linear scan of *all* historical titles stored in extension storage.
+
+  if (!steamAppId) {
+    return;
+  }
+
+  const stored = await browser.storage.local.get({'knownInfo': {}});
+  if (!stored.knownInfo['__gameDisplayOrder__']) {
+    return;
+  }
+
+  for (const humbleTitle of stored.knownInfo['__gameDisplayOrder__']) {
+    if (humbleTitle === gameName) {
+      continue;
+    }
+    if (stored.knownInfo[humbleTitle] && stored.knownInfo[humbleTitle]['steamAppId'] === steamAppId) {
+      let altTitles = stored.knownInfo[humbleTitle]['altTitles'] || [];
+      if (!altTitles.includes(gameName)) {
+        altTitles.push(gameName);
+        await updateStoredInfo({
+          [humbleTitle]: {
+            altTitles: altTitles
+          }
+        });
+      }
     }
   }
 }
