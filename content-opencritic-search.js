@@ -1,11 +1,11 @@
-function fillInSearchFieldFromURLFragment() {
+async function fillInSearchFieldFromURLFragment() {
   const searchTermPrefixed = window.location.hash;
   if (!searchTermPrefixed.startsWith('#humble-search-')) {
     return;
   }
   const searchTerm = decodeURIComponent(searchTermPrefixed.substring('#humble-search-'.length));
 
-  const searchField = document.getElementById('form1');
+  const searchField = await observeQuerySelector('#form1');
   if (!searchField) {
     return;
   }
@@ -28,7 +28,6 @@ function watchForJsNavigation() {
   observer.observe(body, { childList: true, subtree: true });
 }
 
-// Delay so input field is ready
-setTimeout(fillInSearchFieldFromURLFragment, 1000);
+(async () => await fillInSearchFieldFromURLFragment())();
 
 watchForJsNavigation();
