@@ -6,5 +6,6 @@ export default {
     'screenshot1.jpeg',
     'screenshot2.jpeg',
     'get-the-addon-178x60px.dad84b42.png',
+    'generate-amo-metadata.sh',
   ],
 };

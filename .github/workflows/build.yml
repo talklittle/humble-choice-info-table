@@ -46,6 +46,8 @@ jobs:
 
   build-listed:
     runs-on: ubuntu-latest
+    env:
+      AMO_METADATA_FILE: $RUNNER_TEMP/amo-metadata.json
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -61,6 +63,10 @@ jobs:
         run: |
           web-ext --config=web-ext-config.mjs lint
 
+      - name: Generate release notes temporary file
+        run: |
+          bash generate-amo-metadata.sh $AMO_METADATA_FILE
+
       # Sign and submit the extension to Firefox Add-ons.
       # Assume it takes days to approve, so set
       # approval timeout to 0 to skip waiting.
@@ -73,4 +79,5 @@ jobs:
             --channel listed \
             --approval-timeout 0 \
             --api-key ${{ secrets.WEB_EXT_API_KEY }} \
-            --api-secret ${{ secrets.WEB_EXT_API_SECRET }}
+            --api-secret ${{ secrets.WEB_EXT_API_SECRET }} \
+            --amo-metadata $AMO_METADATA_FILE
