@@ -47,7 +47,7 @@ jobs:
   build-listed:
     runs-on: ubuntu-latest
     env:
-      AMO_METADATA_FILE: $RUNNER_TEMP/amo-metadata.json
+      AMO_METADATA_FILE: ${{ runner.temp }}/amo-metadata.json
     steps:
       - name: Checkout
         uses: actions/checkout@v5
