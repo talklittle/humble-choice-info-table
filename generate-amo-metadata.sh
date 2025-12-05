@@ -2,8 +2,8 @@
 
 OUT_FILE="$1"
 
-# Replace markdown headings with bold
-RELEASE_NOTES=$(sed -E 's/^#+ ?(.*)$/\*\*\1\*\*/' CHANGELOG.md)
+# Remove "Changelog" heading, and replace markdown headings with bold
+RELEASE_NOTES=$(sed -E -e '1,2d' -e 's/^#+ ?(.*)$/\*\*\1\*\*/' CHANGELOG.md)
 
 jq --null-input --arg release_notes "$RELEASE_NOTES" '{
   version: {
