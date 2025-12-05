@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.1 (2025-12-04)
+
+* Added extension release notes
+
 ## 1.1.0 (2025-12-04)
 
 * Link directly to Steam and ProtonDB pages when possible ([#7](https://github.com/talklittle/humble-choice-info-table/issues/7))
