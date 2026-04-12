@@ -9,7 +9,10 @@
   "browser_specific_settings": {
     "gecko": {
       "id": "@humble-choice-info-table.talklittle",
-      "strict_min_version": "117.0"
+      "strict_min_version": "117.0",
+      "data_collection_permissions": {
+        "required": ["none"]
+      }
     }
   },
 
